@@ -181,8 +181,8 @@ jobs:
         uses: cloudbees-io/helm-install@v1
         with:
           chart-location: ${{ cloudbees.workspace }}/chart
-          release-name: ${{ env.APP_NAME }}
-          namespace: ${{ env.NAMESPACE }}
+          release-name: PROJECT_NAME
+          namespace: ${{ vars.namespace }}
           values: |
             image:
               tag: ${{ cloudbees.scm.sha }}

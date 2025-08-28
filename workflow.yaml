@@ -60,6 +60,8 @@ jobs:
     outputs:
       CODE_COVERAGE: ${{ steps.RunUnitTest.outputs.CODE_COVERAGE }}
   build-container-image:
+    outputs:
+      artifact-id: ${{ fromJSON(steps.build-image.outputs.artifact-ids)[ format('index.docker.io/{0}/hackers-organized:{1}', secrets.DOCKERHUB_USERNAME, cloudbees.scm.sha) ] }}
     steps:
       - uses: cloudbees-io/checkout@v1
         name: Get source code
@@ -75,6 +77,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - uses: cloudbees-io/kaniko@v1
         name: Build container image
+        id: build-image
         kind: build
         with:
           destination: ${{ secrets.DOCKERHUB_USER }}/hackers-organized:${{ cloudbees.scm.sha }}
@@ -199,12 +202,9 @@ jobs:
             Running hackers-organized:${{ cloudbees.scm.sha }}
           format: MARKDOWN
       - name: Register_deployed_artifact
-        uses: https://github.com/cloudbees-io/register-deployed-artifact@v1
+        uses: https://github.com/cloudbees-io/register-deployed-artifact@v2
         with:
-          name: "${{ secrets.DOCKERHUB_USER }}/hackers-organized"
-          version: "${{ cloudbees.scm.sha }}"
-          url: "${{ secrets.DOCKERHUB_USER }}/hackers-organized:${{ cloudbees.scm.sha }}"
-          digest: ""
+          artifact-id: ${{ needs.build-container-image.outputs.artifact-id }}
           target-environment: "REPLACE_ME_ENV"
     needs:
       - build-container-image

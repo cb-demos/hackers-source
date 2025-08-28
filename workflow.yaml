@@ -94,7 +94,7 @@ jobs:
           content: |-
             ## Built and pushed image to docker hub
 
-            [Docker Hub](https://hub.docker.com/repository/docker/ldonleycb/hackers-organized/tags)
+            [Docker Hub](https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USER }}/hackers-organized/tags)
 
             Deployed hackers-organized:${{ cloudbees.scm.sha }}
           format: MARKDOWN
@@ -168,7 +168,7 @@ jobs:
             | MINOR_COUNT          | ${{ steps.FetchSonarQubeIssues.outputs.MINOR_COUNT }} |
           format: MARKDOWN
   deploy:
-    environment: DOW Production
+    environment: "REPLACE_ME_ENV"
     steps:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
@@ -176,30 +176,35 @@ jobs:
         name: Set kubeconfig
         with:
           secname: ${{ secrets.kubeconfig }}
-      - uses: cloudbees-io/kustomize-deploy@v1
-        name: Deploy to cluster
-        kind: deploy
+      - id: install-chart
+        name: Install helm chart
+        uses: cloudbees-io/helm-install@v1
         with:
-          kustomization-base-dir: ${{ cloudbees.workspace }}/k8s/base
-          kustomization-overlays-dir: ${{ cloudbees.workspace }}/k8s/overlays/prod
-          environment-variables: "{}"
+          chart-location: ${{ cloudbees.workspace }}/chart
+          release-name: ${{ env.APP_NAME }}
+          namespace: ${{ env.NAMESPACE }}
+          values: |
+            image:
+              tag: ${{ cloudbees.scm.sha }}
+            fmKey: ${{ secrets.FM_TOKEN }}
+            hostname: PROJECT_NAME.REPLACE_ME_ENV.preview.cb-demos.io
       - name: Publish evidence
         uses: cloudbees-io/publish-evidence-item@v1
         with:
           content: |-
             ## Deployed environment
-            [Production frontend](https://hackers-organized-prod.preview.cb-demos.io/)
+            [Production frontend](https://PROJECT_NAME.REPLACE_ME_ENV.preview.cb-demos.io/)
 
             Running hackers-organized:${{ cloudbees.scm.sha }}
           format: MARKDOWN
       - name: Register_deployed_artifact
         uses: https://github.com/cloudbees-io/register-deployed-artifact@v1
         with:
-          name: "ldonleycb/hackers-organized"
+          name: "${{ secrets.DOCKERHUB_USER }}/hackers-organized"
           version: "${{ cloudbees.scm.sha }}"
           url: "${{ secrets.DOCKERHUB_USER }}/hackers-organized:${{ cloudbees.scm.sha }}"
           digest: ""
-          target-environment: "DOW Production"
+          target-environment: "REPLACE_ME_ENV"
     needs:
       - build-container-image
       - scan

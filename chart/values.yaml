@@ -1,5 +1,5 @@
 image:
-  repository: ldonleycb/hackers-organized
+  repository: cloudbeesdemo/hackers-organized
   tag: stable
   pullPolicy: Always
 

@@ -29,7 +29,7 @@ jobs:
         with:
           token: ${{ secrets.WES_GH_TOKEN }}
           org-name: cloudbees-days
-          repo-name: hackers-WesTest4Avan
+          repo-name: PROJECT_NAME
           branch-name: main
           workflow-name: test-and-build-image
           test-type: JUnit
@@ -185,6 +185,7 @@ jobs:
           namespace: ${{ vars.namespace }}
           values: |
             image:
+              repository: ${{ secrets.DOCKERHUB_USER }}/hackers-organized
               tag: ${{ cloudbees.scm.sha }}
             fmKey: ${{ secrets.FM_TOKEN }}
             hostname: PROJECT_NAME.REPLACE_ME_ENV.preview.cb-demos.io

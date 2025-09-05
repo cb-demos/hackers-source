@@ -190,7 +190,7 @@ jobs:
             image:
               repository: ${{ vars.DOCKER_USER }}/hackers-organized
               tag: ${{ cloudbees.scm.sha }}
-            fmKey: ${{ secrets.FM_TOKEN }}
+            fmKey: ${{ vars.FM_TOKEN }}
             hostname: PROJECT_NAME.REPLACE_ME_ENV.preview.cb-demos.io
       - name: Publish evidence
         uses: cloudbees-io/publish-evidence-item@v1

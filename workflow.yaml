@@ -191,6 +191,8 @@ jobs:
               repository: ${{ vars.DOCKER_USER }}/hackers-organized
               tag: ${{ cloudbees.scm.sha }}
             fmKey: ${{ vars.FM_TOKEN }}
+            useVPC: REPLACE_ME_USE_VPC
+            fmInstance: REPLACE_ME_FM_INSTANCE
             hostname: PROJECT_NAME.REPLACE_ME_ENV.preview.cb-demos.io
       - name: Publish evidence
         uses: cloudbees-io/publish-evidence-item@v1

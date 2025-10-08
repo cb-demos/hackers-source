@@ -21,6 +21,19 @@ const options = {
   impressionHandler: impressionHandler,
 };
 
+// Add VPC-specific configuration if USE_VPC is enabled
+if (window.APP_CONFIG.USE_VPC === 'true') {
+  const instance = window.APP_CONFIG.FM_INSTANCE;
+  options.disableSignatureVerification = true;
+  options.selfManaged = {
+    configurationURL: `https://api.${instance}/device/get_configuration`,
+    serverURL: `https://rox-conf.${instance}`,
+    stateURL: `https://api.${instance}/device/update_state_store/`,
+    analyticsURL: `https://fm-analytics.${instance}`,
+    pushUpdateURL: `https://sdk-notification-service.${instance}/sse`,
+  };
+}
+
 export const Flags = {
   score: new Rox.Flag(false),
   ask: new Rox.Flag(false),

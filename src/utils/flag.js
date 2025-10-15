@@ -24,13 +24,15 @@ const options = {
 // Add VPC-specific configuration if USE_VPC is enabled
 if (window.APP_CONFIG.USE_VPC === 'true') {
   const instance = window.APP_CONFIG.FM_INSTANCE;
-  options.disableSignatureVerification = true;
-  options.selfManaged = {
-    configurationURL: `https://api.${instance}/device/get_configuration`,
-    serverURL: `https://rox-conf.${instance}`,
-    stateURL: `https://api.${instance}/device/update_state_store/`,
-    analyticsURL: `https://fm-analytics.${instance}`,
-    pushUpdateURL: `https://sdk-notification-service.${instance}/sse`,
+  const vpcApiHost = `api.${instance}`;
+  options.configuration = {
+    API_HOST: vpcApiHost,
+    CD_API_ENDPOINT: `https://${vpcApiHost}/device/get_configuration`,
+    CD_S3_ENDPOINT: `https://rox-conf.${instance}/`,
+    SS_API_ENDPOINT: `https://${vpcApiHost}/device/update_state_store/`,
+    SS_S3_ENDPOINT: `https://rox-state.${instance}/`,
+    NOTIFICATIONS_ENDPOINT: `https://sdk-notification-service.${instance}/sse`,
+    ANALYTICS_ENDPOINT: `https://fm-analytics.${instance}`,
   };
 }
 
